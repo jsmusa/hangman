@@ -8,19 +8,43 @@ class Dictionary
   def pick
     @word = @@words.select do |word|
       word.length > 5 && word.length < 12
-    end.shuffle.fetch(0)
+    end.sample
   end
 end
 
-# class Guess
+class Game
+  attr_accessor :guess
 
-# end
+  def initialize(word)
+    @secret_word = word
+    @guess = []
+  end
 
-# class Game
+  def check
+    if @secret_word.include?(@guess.last)
+      display(@guess)
+      puts @display
+    else
+      puts "Wrong answer"
+    end
+  end
 
-# end
+  def display(*char)
+    @display = @secret_word.gsub(/[^#{char}]/, " ")
+  end
+end
 
-my_dictionary = Dictionary.new
-word = my_dictionary.pick
+# dictionary = Dictionary.new
+# my_word = "dictionary"
+# puts my_word
 
-puts word
+# my_game = Game.new(my_word)
+
+# my_game.guess.push("a")
+# my_game.check
+
+# my_game.guess.push("i")
+# my_game.check
+
+# my_game.guess.push("m")
+# my_game.check
