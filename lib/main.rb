@@ -2,7 +2,7 @@ class Dictionary
   @@file = File.open("words10000.txt", "r")
 
   def initialize
-    @@words = @@file.readlines
+    @@words = @@file.readlines.map {|line| line.chomp}
   end
 
   def pick
@@ -12,27 +12,72 @@ class Dictionary
   end
 end
 
-class Game
-  attr_accessor :guess
+class Guess
+  attr_reader :list
 
   def initialize(word)
     @secret_word = word
-    @guess = []
+    @list = []
+  end
+
+  def ask
+    loop do
+      puts "Enter your guess (single character):"
+      input = gets.chomp.downcase
+      
+      unless input.match?(/[A-Za-z]{1}/) && input.length == 1
+        puts "Invalid input, please try again"
+        redo
+      else
+        @list.push(input)
+        break
+      end
+    end 
+  end
+
+  def wrong_tries 
+    @list.difference(@secret_word.split("")).length
+  end
+end
+
+class Game
+  def initialize
+    @dictionary = Dictionary.new
+    @word = @dictionary.pick
+    @guess = Guess.new(@word)
+    @display = nil
+  end
+  
+  def compare(word, *char)
+    @display = word.gsub(/[^#{char}]/, "_")
+  end
+
+  def display
+    compare(@word, @guess.list)
+    puts @display.to_s.split("").join(" ")
   end
 
   def check
-    if @secret_word.include?(@guess.last)
-      display(@guess)
-      puts @display
-    else
-      puts "Wrong answer"
+    unless @word.include?(@guess.list.last)
+      puts "Wrong guess, #{@guess.list.last} is not found in the word"
+      puts "#{10 - @guess.wrong_tries} tries remaining\n\n"
     end
   end
 
-  def display(*char)
-    @display = @secret_word.gsub(/[^#{char}]/, " ")
+  def play
+    until @guess.wrong_tries > 10
+      @guess.ask()
+      check()
+      display()
+      puts "Guess list: #{@guess.list.join(" ")}\n\n"
+    end
+
+    puts "Game Over!, the secret word is #{@word}."
   end
 end
+
+my_game = Game.new
+my_game.play
 
 # dictionary = Dictionary.new
 # my_word = "dictionary"
