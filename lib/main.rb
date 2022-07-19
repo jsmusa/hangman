@@ -1,3 +1,6 @@
+require "colorize"
+require "yaml"
+
 class Dictionary
   @@file = File.open("words10000.txt", "r")
 
@@ -13,30 +16,28 @@ class Dictionary
 end
 
 class Guess
-  attr_reader :list
+  attr_reader :list, :input
 
   def initialize(word)
     @secret_word = word
-    @list = []
+    @list = [""]
   end
 
   def ask
     loop do
       puts "Enter your guess (single character):"
-      input = gets.chomp.downcase
+      @input = gets.chomp.downcase
       
-      unless input.match?(/[A-Za-z]{1}/) && input.length == 1
-        puts "Invalid input, please try again"
-        redo
-      else
-        @list.push(input)
+      if @input.match?(/[A-Za-z]{1}/) && @input.length == 1
         break
       end
+
+      puts "Invalid input, please try again".red
     end 
   end
 
   def wrong_tries 
-    @list.difference(@secret_word.split("")).length
+    @list.difference(@secret_word.split("")).length - 1
   end
 end
 
@@ -45,51 +46,59 @@ class Game
     @dictionary = Dictionary.new
     @word = @dictionary.pick
     @guess = Guess.new(@word)
-    @display = nil
+    @result = ""
   end
   
   def compare(word, *char)
-    @display = word.gsub(/[^#{char}]/, "_")
+    @display = word.gsub(/[^#{char.to_s}]/, "_")
+  end
+
+  def check
+    if @guess.list.include?(@guess.input)
+      @result = "You've already guessed this! Try again\n".yellow
+    elsif @word.include?(@guess.input)
+      @result = "Nice try!\n".green
+    else  
+      @result = "Unfortunately, #{@guess.input} is not found in the word\n".magenta
+    end
+  end
+
+  def input
+    @guess.list.push(@guess.input).uniq!
   end
 
   def display
     compare(@word, @guess.list)
+
+    puts `clear`
     puts @display.to_s.split("").join(" ")
+    puts "#{10 - @guess.wrong_tries} wrong guess(es) remaining\n".cyan
+    puts "Guess list: #{@guess.list.drop(1).join(" ")}\n\n"
+    puts @result
   end
 
-  def check
-    unless @word.include?(@guess.list.last)
-      puts "Wrong guess, #{@guess.list.last} is not found in the word"
-      puts "#{10 - @guess.wrong_tries} tries remaining\n\n"
-    end
+  def save
+    
   end
 
   def play
-    until @guess.wrong_tries > 10
+    until @guess.wrong_tries >= 10
+      display()
+
+      if @word == @display
+        puts "Congratulations, You WIN!\n".bold.green
+        return
+      end
+
       @guess.ask()
       check()
-      display()
-      puts "Guess list: #{@guess.list.join(" ")}\n\n"
+      input()
     end
 
-    puts "Game Over!, the secret word is #{@word}."
+    display()
+    puts "Game Over! The secret word is #{@word}.\n".bold.light_red
   end
 end
 
 my_game = Game.new
 my_game.play
-
-# dictionary = Dictionary.new
-# my_word = "dictionary"
-# puts my_word
-
-# my_game = Game.new(my_word)
-
-# my_game.guess.push("a")
-# my_game.check
-
-# my_game.guess.push("i")
-# my_game.check
-
-# my_game.guess.push("m")
-# my_game.check
