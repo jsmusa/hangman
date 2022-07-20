@@ -1,9 +1,9 @@
 --- !ruby/object:Game
 dictionary: !ruby/object:Dictionary
-  word: tourist
-word: tourist
+  word: colors
+word: colors
 guess: !ruby/object:Guess
-  secret_word: tourist
+  secret_word: colors
   list:
   - ''
   - a
@@ -11,7 +11,11 @@ guess: !ruby/object:Guess
   - r
   - c
   - s
+  - d
+  - "y"
   - t
+  - i
+  - o
   input: save
 result: "\e[0;32;49mNice try!\n\e[0m"
-display: t__r_st
+display: co_ors
