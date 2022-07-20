@@ -1,0 +1,17 @@
+--- !ruby/object:Game
+dictionary: !ruby/object:Dictionary
+  word: tourist
+word: tourist
+guess: !ruby/object:Guess
+  secret_word: tourist
+  list:
+  - ''
+  - a
+  - e
+  - r
+  - c
+  - s
+  - t
+  input: save
+result: "\e[0;32;49mNice try!\n\e[0m"
+display: t__r_st
