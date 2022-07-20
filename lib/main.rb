@@ -6,6 +6,7 @@ class Dictionary
 
   def initialize
     @@words = @@file.readlines.map {|line| line.chomp}
+    @@file.close
   end
 
   def pick
@@ -25,10 +26,11 @@ class Guess
 
   def ask
     loop do
-      puts "Enter your guess (single character):"
+      puts "Enter your guess (single character) or 'save' to save:"
       @input = gets.chomp.downcase
-      
-      if @input.match?(/[A-Za-z]{1}/) && @input.length == 1
+      if @input == "save"
+        break
+      elsif @input.match?(/[A-Za-z]{1}/) && @input.length == 1
         break
       end
 
@@ -77,7 +79,16 @@ class Game
     puts @result
   end
 
-  def save
+  def save_game
+    puts "\nEnter the name for your save file"
+    file_name = gets.chomp
+
+    File.open("./save/#{file_name}.yaml", "w") do |file|
+      file.write YAML::dump(self)
+    end  
+  end
+
+  def load_game
     
   end
 
@@ -91,6 +102,13 @@ class Game
       end
 
       @guess.ask()
+
+      if @guess.input == "save"
+        save_game()
+        puts "\nSee you again!"
+        return
+      end
+
       check()
       input()
     end
@@ -101,4 +119,12 @@ class Game
 end
 
 my_game = Game.new
+
+puts "Press 1 to play new game or 2 to load game\n[1] New game\n[2] Load game"
 my_game.play
+
+
+# p load_file
+# new_game = YAML.load_file("./save/sample.yaml", permitted_classes: [Game, Dictionary, Guess])
+# p new_game
+# new_game.play
