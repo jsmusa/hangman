@@ -89,7 +89,20 @@ class Game
   end
 
   def load_game
-    
+    puts Dir.glob("*.yaml", base: "save").map {|file| File.basename(file, ".yaml")} 
+    puts "\nChoose your load file from above or enter 'quit' to start a new game"
+    loop do
+      input = gets.chomp
+      file_name = File.join("save", "#{input}.yaml")
+
+      if File.exists?(file_name)
+        return YAML::load_file(file_name, permitted_classes: [Game, Dictionary, Guess])
+      elsif input == "quit"
+        return self
+      else
+        puts "#{input} isn't a save file"
+      end
+    end
   end
 
   def play
@@ -120,7 +133,20 @@ end
 
 my_game = Game.new
 
-puts "Press 1 to play new game or 2 to load game\n[1] New game\n[2] Load game"
+loop do
+  puts `clear`
+  puts "Press 1 to play new game or 2 to load game\n[1] New game\n[2] Load game"
+  input = gets.chomp
+
+  if input == "2"
+    my_game = my_game.load_game
+    sleep 1
+    break
+  elsif input == "1"
+    break
+  end
+end
+
 my_game.play
 
 
