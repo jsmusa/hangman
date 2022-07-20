@@ -1,0 +1,22 @@
+--- !ruby/object:Game
+dictionary: !ruby/object:Dictionary
+  word: exclusively
+word: exclusively
+guess: !ruby/object:Guess
+  secret_word: exclusively
+  list:
+  - ''
+  - e
+  - r
+  - s
+  - v
+  - a
+  - "n"
+  - t
+  - o
+  - i
+  - x
+  - p
+  input: save
+result: "\e[0;35;49mUnfortunately, p is not found in the word\n\e[0m"
+display: ex___sive__
